@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Array;
 import com.leibeir.lifesimulator.api.IRenderer;
 
 public abstract class WorldRenderer implements IRenderer {
-    protected final World world;
+    public final World world;
     protected final ModelBatch modelBatch = new ModelBatch();
     protected final Array<ModelInstance> modelInstances = new Array<>();
 
