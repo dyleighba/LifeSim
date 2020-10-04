@@ -54,8 +54,8 @@ public class World implements IWorld {
 
     @Override
     public float getElevation(int x, int z) {
-        assert x >= 0 && x < size;
-        assert z >= 0 && z < size;
+        x = MathHelper.minmax(0, size-1, x);
+        z = MathHelper.minmax(0, size-1, z);
         return elevationMap[x][z];
     }
 
