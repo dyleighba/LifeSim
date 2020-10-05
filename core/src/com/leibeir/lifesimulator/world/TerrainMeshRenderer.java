@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.leibeir.lifesimulator.util.RandomColour;
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 
 import java.util.Random;
 
@@ -24,6 +25,9 @@ public class TerrainMeshRenderer extends WorldRenderer {
 
     public TerrainMeshRenderer(World world) {
         super(world);
+        if ((float)world.getSize() % chunkSize > 0) {
+            throw new ValueException("In the interest of visual correctness world.size much be a multiple of chunkSize.");
+        }
         chunkGridSize = (int)Math.ceil((float)world.getSize() / chunkSize);
         generateAllChunkMesh();
     }
@@ -38,8 +42,6 @@ public class TerrainMeshRenderer extends WorldRenderer {
     }
 
     private ModelInstance createChunkMesh(int chunk_x, int chunk_z) {
-        // TODO make this function defensive as the world height map may be smaller than chunkGridSize * chunkSize
-
         int attr = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates;
         Texture myTexture = new Texture("badlogic.jpg");
 
