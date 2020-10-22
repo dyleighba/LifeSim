@@ -39,7 +39,7 @@ public class LifeSimulator implements ApplicationListener {
 		environment.add(new DirectionalLight().set(1, 1, 1, -1f, -0.8f, -0.2f));
 
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		cam.position.set(32f, 7f, 32f);
+		cam.position.set(0f, 7f, 0f);
 		cam.lookAt(worldCenter);
 		cam.near = 0.1f;
 		cam.far = 500f;
