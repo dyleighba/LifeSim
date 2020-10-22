@@ -16,12 +16,9 @@ import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import java.util.Random;
 
 public class TerrainMeshRenderer extends WorldRenderer {
-    //private final Model model;
-    public final static Color grass = new Color(0x5a691400);
-    public final static Color sand = new Color( 0x80808000);
-    public final static Color deepSand = new Color( 0x65432100);
-    public final static int chunkSize = 32;
+    public final static int chunkSize = 128;
     public final int chunkGridSize;
+    public final float wallDepth = -10f;
 
     public TerrainMeshRenderer(World world) {
         super(world);

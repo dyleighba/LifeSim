@@ -9,9 +9,6 @@ import com.leibeir.lifesimulator.util.RandomColour;
 
 public class TerrainRenderer extends WorldRenderer {
     private final Model model;
-    public final static Color grass = new Color(0x5a691400);
-    public final static Color sand = new Color( 0x80808000);
-    public final static Color deepSand = new Color( 0x65432100);
 
     public TerrainRenderer(World world) {
         super(world);
