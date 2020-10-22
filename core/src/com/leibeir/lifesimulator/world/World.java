@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.leibeir.lifesimulator.api.IWorld;
 import com.leibeir.lifesimulator.external.OpenSimplexNoise;
+import com.leibeir.lifesimulator.util.MathHelper;
 
 import java.util.Random;
 
@@ -19,7 +20,7 @@ public class World implements IWorld {
     public static float seaLevel = 0f;
     public static float sandThreshold = 0.9f;
     public final short seed;
-    private final TerrainRenderer terrainRenderer;
+    private final WorldRenderer renderer;
     private final WaterRenderer waterRenderer;
 
     public World(int size){
@@ -27,7 +28,7 @@ public class World implements IWorld {
         seed = (short)rand.nextInt(Short.MAX_VALUE);
         this.size = size;
         generateWorld();
-        terrainRenderer = new TerrainRenderer(this);
+        renderer = new TerrainMeshRenderer(this);
         waterRenderer = new WaterRenderer(this);
     }
 
@@ -54,8 +55,8 @@ public class World implements IWorld {
 
     @Override
     public float getElevation(int x, int z) {
-        assert x >= 0 && x < size;
-        assert z >= 0 && z < size;
+        x = MathHelper.minmax(0, size-1, x);
+        z = MathHelper.minmax(0, size-1, z);
         return elevationMap[x][z];
     }
 
@@ -92,13 +93,13 @@ public class World implements IWorld {
 
     @Override
     public void render(Camera camera, Environment environment) {
-        terrainRenderer.render(camera, environment);
+        renderer.render(camera, environment);
         waterRenderer.render(camera, environment);
     }
 
     @Override
     public void dispose() {
-        terrainRenderer.dispose();
+        renderer.dispose();
         waterRenderer.dispose();
     }
 }
