@@ -1,6 +1,5 @@
 package com.leibeir.lifesimulator.world;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.leibeir.lifesimulator.api.IWorld;
@@ -21,7 +20,7 @@ public class World implements IWorld {
     public static float seaLevel = 0f;
     public static float sandThreshold = 0.9f;
     public final short seed;
-    private final TerrainMeshRenderer terrainRenderer;
+    private final WorldRenderer renderer;
     private final WaterRenderer waterRenderer;
 
     public World(int size){
@@ -29,7 +28,7 @@ public class World implements IWorld {
         seed = (short)rand.nextInt(Short.MAX_VALUE);
         this.size = size;
         generateWorld();
-        terrainRenderer = new TerrainMeshRenderer(this);
+        renderer = new TerrainMeshRenderer(this);
         waterRenderer = new WaterRenderer(this);
     }
 
@@ -94,13 +93,13 @@ public class World implements IWorld {
 
     @Override
     public void render(Camera camera, Environment environment) {
-        terrainRenderer.render(camera, environment);
+        renderer.render(camera, environment);
         waterRenderer.render(camera, environment);
     }
 
     @Override
     public void dispose() {
-        terrainRenderer.dispose();
+        renderer.dispose();
         waterRenderer.dispose();
     }
 }
