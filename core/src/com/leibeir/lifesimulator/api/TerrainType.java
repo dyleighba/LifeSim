@@ -7,5 +7,6 @@ public enum TerrainType {
     Gravel,
     Sand,
     Dirt,
-    Grass
+    Grass,
+    Stone
 }
