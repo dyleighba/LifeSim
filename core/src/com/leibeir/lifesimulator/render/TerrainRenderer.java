@@ -1,4 +1,4 @@
-package com.leibeir.lifesimulator.world;
+package com.leibeir.lifesimulator.render;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes;
@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.leibeir.lifesimulator.util.RandomColour;
+import com.leibeir.lifesimulator.world.World;
 
 public class TerrainRenderer extends WorldRenderer {
     private final Model model;

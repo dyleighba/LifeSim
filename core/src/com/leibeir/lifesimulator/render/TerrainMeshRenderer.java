@@ -1,4 +1,4 @@
-package com.leibeir.lifesimulator.world;
+package com.leibeir.lifesimulator.render;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -10,9 +10,8 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.leibeir.lifesimulator.util.RandomColour;
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
+import com.leibeir.lifesimulator.world.World;
 
 import java.util.Random;
 

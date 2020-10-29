@@ -1,6 +1,6 @@
-package com.leibeir.lifesimulator.api;
+package com.leibeir.lifesimulator.api.tile;
 
-public enum TerrainType {
+public enum TileType {
     OutOfBounds,
     DeepWater,
     Water,

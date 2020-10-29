@@ -11,12 +11,6 @@ public abstract class Renderer implements IRenderer {
     protected ModelBatch modelBatch = new ModelBatch();
     protected Array<ModelInstance> modelInstances = new Array<>();
 
-    public Renderer() {
-
-    }
-
-    public void update() {};
-
     public void render(Camera camera, Environment environment) {
         modelBatch.begin(camera);
         modelBatch.render(modelInstances, environment);

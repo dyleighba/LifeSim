@@ -1,8 +1,8 @@
 package com.leibeir.lifesimulator.logic.data;
 
 import com.leibeir.lifesimulator.api.ITerrain;
-import com.leibeir.lifesimulator.api.TerrainType;
-import com.leibeir.lifesimulator.logic.data.tile.PhysicalThing;
+import com.leibeir.lifesimulator.api.tile.PhysicalType;
+import com.leibeir.lifesimulator.api.tile.TileType;
 import com.leibeir.lifesimulator.logic.terrain.TerrainGeneration;
 import com.leibeir.lifesimulator.util.MathHelper;
 
@@ -10,9 +10,9 @@ import java.util.Random;
 
 public class Terrain implements ITerrain {
     private final int size;
-    private PhysicalThing[][] physicalThings;
+    protected PhysicalType[][] physicalTypes;
     private float[][] elevationMap;
-    private TerrainType[][] typeMap;
+    private TileType[][] typeMap;
     private float seaLevel;
     public final short seed;
 
@@ -30,9 +30,9 @@ public class Terrain implements ITerrain {
     };
 
     private void setup() {
-        physicalThings = new PhysicalThing[this.size][this.size];
-        elevationMap = TerrainGeneration.genElevationMap(this.size, this.seed);
+        elevationMap = TerrainGeneration.genElevationMap(size, seed);
         typeMap = TerrainGeneration.genTypeMap(elevationMap);
+        physicalTypes = TerrainGeneration.genPhysicals(elevationMap, typeMap, seed);
         this.seaLevel = TerrainGeneration.SEA_LEVEL;
     }
 
@@ -65,22 +65,24 @@ public class Terrain implements ITerrain {
 
     @Override
     public boolean isPassable(int x, int z) {
-        return getType(x, z) != TerrainType.OutOfBounds && physicalThings[x][z] == null;
+        return getType(x, z) != TileType.OutOfBounds && getPhysicalType(x, z) != PhysicalType.Nothing;
     }
 
     @Override
-    public TerrainType getType(int x, int z) {
+    public TileType getType(int x, int z) {
         if ((x < 0 || x >= size) || (z < 0 || z >= size)) {
-            return TerrainType.OutOfBounds;
+            return TileType.OutOfBounds;
         }
         return typeMap[x][z];
     }
 
     @Override
-    public PhysicalThing getPhysicalThing(int x, int z) {
+    public PhysicalType getPhysicalType(int x, int z) {
         if ((x < 0 || x >= size) || (z < 0 || z >= size)) {
-            return null;
+            return PhysicalType.Nothing;
         }
-        return physicalThings[x][z];
+        PhysicalType pType = physicalTypes[x][z];
+        if (pType == null) pType = PhysicalType.Nothing;
+        return pType;
     }
 }

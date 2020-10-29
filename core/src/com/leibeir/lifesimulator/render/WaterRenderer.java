@@ -1,4 +1,4 @@
-package com.leibeir.lifesimulator.world;
+package com.leibeir.lifesimulator.render;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -12,8 +12,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import com.leibeir.lifesimulator.api.IRenderer;
-import com.leibeir.lifesimulator.util.RandomColour;
+import com.leibeir.lifesimulator.world.World;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class WaterRenderer extends WorldRenderer {

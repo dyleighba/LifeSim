@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -17,6 +18,8 @@ import com.leibeir.lifesimulator.world.World;
 import java.util.Random;
 
 public class LifeSimulator implements ApplicationListener {
+	public static String modelFile = "AppReady.g3db";
+
 	public PerspectiveCamera cam;
 	public CameraInputController camController;
 	public ModelBatch modelBatch;
@@ -52,41 +55,14 @@ public class LifeSimulator implements ApplicationListener {
 		Gdx.input.setInputProcessor(camController);
 
 		assets = new AssetManager();
-		assets.load("Trees.g3db", Model.class);
+		assets.load(modelFile, Model.class);
 		loading = true;
 	}
 
 	private void doneLoading() {
-		Model ship = assets.get("Trees.g3db", Model.class);
-		Random rand = new Random();
-		for (int x=0; x <= world.getSize()-1; x+=7) {
-			for (int z=0; z <= world.getSize()-1; z+=7) {
-				if (world.isGrass(x, z)){
-					String model_id = ship.nodes.get(rand.nextInt(ship.nodes.size)).id;
-					if (model_id.contains("Stump")) {
-						if (rand.nextInt(32) > 2) {
-							continue;
-						}
-					}
-					ModelInstance shipInstance = new ModelInstance(ship, model_id);
-					//shipInstance.materials.get(0).set(new ColorAttribute(ColorAttribute.Diffuse, Color.BROWN));
-					//shipInstance.materials.get(0).set(ColorAttribute.createDiffuse(RandomColour.get()));
-					//Material randMat = randomColourMat.getRandMat();
-					//Gdx.app.log("RandMat", randMat.toString());
-					//shipInstance.materials.set(0, randMat);
-					float new_x = (x-2)+rand.nextInt(8);
-					new_x = MathHelper.minmax(0, world.getSize()-1, new_x);
-					float new_z = (z-2)+rand.nextInt(8);
-					new_z = MathHelper.minmax(0, world.getSize()-1, new_z);
-
-					if (world.isGrass((int)new_x, (int)new_z)) {
-						shipInstance.transform.setToTranslation(
-								new_x, world.getElevation((int)new_x, (int)new_z)-0.1f, new_z);
-						humanInstances.add(shipInstance);
-					}
-				}
-			}
-		}
+		Model physicalModels = assets.get(modelFile, Model.class);
+		// TODO pass the model to PhysicalsRenderer
+		world.setupPhysicalsRenderer(physicalModels);
 		loading = false;
 	}
 

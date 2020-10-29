@@ -2,18 +2,20 @@ package com.leibeir.lifesimulator.world;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.leibeir.lifesimulator.api.IWorld;
-import com.leibeir.lifesimulator.api.TerrainType;
-import com.leibeir.lifesimulator.external.OpenSimplexNoise;
+import com.leibeir.lifesimulator.api.tile.TileType;
 import com.leibeir.lifesimulator.logic.data.Terrain;
-import com.leibeir.lifesimulator.util.MathHelper;
-
-import java.util.Random;
+import com.leibeir.lifesimulator.render.PhysicalsRenderer;
+import com.leibeir.lifesimulator.render.TerrainMeshRenderer;
+import com.leibeir.lifesimulator.render.WaterRenderer;
+import com.leibeir.lifesimulator.render.WorldRenderer;
 
 public class World implements IWorld {
     private final int size;
     private final WorldRenderer renderer;
     private final WaterRenderer waterRenderer;
+    private PhysicalsRenderer physicalsRenderer;
     private Terrain terrain;
 
     public World(int size){
@@ -21,6 +23,10 @@ public class World implements IWorld {
         terrain = new Terrain(this.size);
         renderer = new TerrainMeshRenderer(this);
         waterRenderer = new WaterRenderer(this);
+    }
+
+    public void setupPhysicalsRenderer(Model model) {
+        physicalsRenderer = new PhysicalsRenderer(model, terrain);
     }
 
     @Override
@@ -45,33 +51,36 @@ public class World implements IWorld {
 
     @Override
     public boolean isSand(int x, int z) {
-        return terrain.getType(x, z) == TerrainType.Sand;
+        return terrain.getType(x, z) == TileType.Sand;
     }
 
     @Override
     public boolean isWater(int x, int z) {
-        return terrain.getType(x, z) == TerrainType.Water;
+        return terrain.getType(x, z) == TileType.Water;
     }
 
     @Override
     public boolean isDeepWater(int x, int z) {
-        return terrain.getType(x, z) == TerrainType.DeepWater;
+        return terrain.getType(x, z) == TileType.DeepWater;
     }
 
     @Override
     public boolean isGrass(int x, int z) {
-        return terrain.getType(x, z) == TerrainType.Grass;
+        return terrain.getType(x, z) == TileType.Grass;
     }
 
     @Override
     public boolean isStone(int x, int z) {
-        return terrain.getType(x, z) == TerrainType.Stone;
+        return terrain.getType(x, z) == TileType.Stone;
     }
 
     @Override
     public void render(Camera camera, Environment environment) {
         renderer.render(camera, environment);
         waterRenderer.render(camera, environment);
+        if (physicalsRenderer != null) {
+            physicalsRenderer.render(camera, environment);
+        }
     }
 
     @Override
