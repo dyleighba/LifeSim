@@ -2,31 +2,23 @@ package com.leibeir.lifesimulator;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.leibeir.lifesimulator.util.MathHelper;
-import com.leibeir.lifesimulator.util.RandomColour;
 import com.leibeir.lifesimulator.world.World;
 
 import java.util.Random;
 
 public class LifeSimulator implements ApplicationListener {
-	public static String modelFile = "AppReady.g3db";
-
 	public PerspectiveCamera cam;
 	public CameraInputController camController;
 	public ModelBatch modelBatch;
-	public AssetManager assets;
 	public Array<ModelInstance> humanInstances = new Array<>();
 	public Environment environment;
-	public boolean loading;
 	public World world;
 
 	@Override
@@ -53,23 +45,10 @@ public class LifeSimulator implements ApplicationListener {
 		camController.rotateRightKey = -1;
 		//camController.target = worldCenter;
 		Gdx.input.setInputProcessor(camController);
-
-		assets = new AssetManager();
-		assets.load(modelFile, Model.class);
-		loading = true;
-	}
-
-	private void doneLoading() {
-		Model physicalModels = assets.get(modelFile, Model.class);
-		// TODO pass the model to PhysicalsRenderer
-		world.setupPhysicalsRenderer(physicalModels);
-		loading = false;
 	}
 
 	@Override
 	public void render () {
-		if (loading && assets.update())
-			doneLoading();
 		camController.target = cam.position;
 		camController.update();
 
@@ -88,7 +67,6 @@ public class LifeSimulator implements ApplicationListener {
 	public void dispose () {
 		modelBatch.dispose();
 		humanInstances.clear();
-		assets.dispose();
 		world.dispose();
 	}
 

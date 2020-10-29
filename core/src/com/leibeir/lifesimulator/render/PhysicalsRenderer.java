@@ -10,17 +10,24 @@ import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import java.util.*;
 
 public class PhysicalsRenderer extends Renderer {
-    private final Model model;
+    private Model model;
     private final Map<PhysicalType, List<Node>> modelMapping = new HashMap<>();
     private final Terrain terrain;
 
-    public PhysicalsRenderer(Model modelFile, Terrain terrain) {
+    private static final String modelFile = "AppReady.g3db";
+
+    public PhysicalsRenderer(Terrain terrain) {
         this.terrain = terrain;
-        this.model = modelFile;
         for (PhysicalType physicalType : PhysicalType.values()) {
             modelMapping.put(physicalType, new ArrayList<>());
         }
-        for (Node node : modelFile.nodes) {
+        loadAsset(modelFile, Model.class);
+    }
+
+    @Override
+    protected void doneAssetLoading() {
+        model = assetManager.get(modelFile, Model.class);
+        for (Node node : model.nodes) {
             for (PhysicalType physicalType : PhysicalType.values()) {
                 if (node.id.contains(physicalType.name())) {
                     modelMapping.get(physicalType).add(node);
@@ -30,6 +37,7 @@ public class PhysicalsRenderer extends Renderer {
         update();
     }
 
+    @Override
     public void update() {
         Random r = new Random(terrain.seed);
 

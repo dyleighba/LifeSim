@@ -2,7 +2,6 @@ package com.leibeir.lifesimulator.world;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.leibeir.lifesimulator.api.IWorld;
 import com.leibeir.lifesimulator.api.tile.TileType;
 import com.leibeir.lifesimulator.logic.data.Terrain;
@@ -15,18 +14,15 @@ public class World implements IWorld {
     private final int size;
     private final WorldRenderer renderer;
     private final WaterRenderer waterRenderer;
-    private PhysicalsRenderer physicalsRenderer;
-    private Terrain terrain;
+    private final PhysicalsRenderer physicalsRenderer;
+    private final Terrain terrain;
 
     public World(int size){
         this.size = size;
         terrain = new Terrain(this.size);
         renderer = new TerrainMeshRenderer(this);
         waterRenderer = new WaterRenderer(this);
-    }
-
-    public void setupPhysicalsRenderer(Model model) {
-        physicalsRenderer = new PhysicalsRenderer(model, terrain);
+        physicalsRenderer = new PhysicalsRenderer(terrain);
     }
 
     @Override

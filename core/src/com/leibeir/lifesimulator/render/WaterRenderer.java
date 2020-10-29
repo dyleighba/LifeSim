@@ -1,7 +1,6 @@
 package com.leibeir.lifesimulator.render;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
@@ -13,29 +12,26 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.leibeir.lifesimulator.world.World;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class WaterRenderer extends WorldRenderer {
-    private AssetManager assets;
     public final int waterGridSize;
-    public final static Color water = new Color(0x82A7A6BB);
 
-    private boolean loading;
+    public final static Color water = new Color(0x82A7A6BB);
+    private static final String modelFile = "Water.obj";
 
     public WaterRenderer(World world) {
         super(world);
 
-        assets = new AssetManager();
-        assets.load("Water.obj", Model.class);
-        loading = true;
         waterGridSize = (int)Math.ceil((float)world.getSize() / 16);
+        loadAsset(modelFile, Model.class);
     }
 
-    private void doneLoading() {
+    public void update() {
+        modelInstances.clear();
         float seaLevel = world.getSeaLevel();
         for (int x=0; x<waterGridSize; x++) {
             for (int z=0; z<waterGridSize; z++) {
-                ModelInstance mi = new ModelInstance(assets.get("Water.obj", Model.class));
+                ModelInstance mi = new ModelInstance(assetManager.get(modelFile, Model.class));
                 mi.materials.get(0).set(ColorAttribute.createDiffuse(water), new BlendingAttribute(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA));
                 float offset_x = (x*16)+7.5f;
                 float offset_z = (z*16)+7.5f;
@@ -50,20 +46,18 @@ public class WaterRenderer extends WorldRenderer {
                 modelInstances.add(mi);
             }
         }
-
-        loading = false;
-    }
-
-    public void update() {
-        throw new NotImplementedException();
     };
 
+    @Override
     public void render(Camera camera, Environment environment) {
-        if (loading && assets.update())
-            doneLoading();
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
         super.render(camera, environment);
+    }
+
+    @Override
+    public void doneAssetLoading() {
+        update();
     }
 
 }
