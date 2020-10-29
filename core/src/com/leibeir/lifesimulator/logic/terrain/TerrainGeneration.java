@@ -1,7 +1,10 @@
 package com.leibeir.lifesimulator.logic.terrain;
 
-import com.leibeir.lifesimulator.api.TerrainType;
+import com.leibeir.lifesimulator.api.tile.PhysicalType;
+import com.leibeir.lifesimulator.api.tile.TileType;
 import com.leibeir.lifesimulator.external.OpenSimplexNoise;
+
+import java.util.Random;
 
 public class TerrainGeneration {
     public static float SEA_LEVEL = 0f;
@@ -12,9 +15,9 @@ public class TerrainGeneration {
     public static float LAND_SHIFT = 1f;
     public static float SHORE_THRESHOLD = 0.9f;
 
-    public static TerrainType SHORE_TYPE = TerrainType.Gravel;
-    public static TerrainType LAND_TYPE = TerrainType.Grass;
-    public static TerrainType DEEPWATER_TYPE = TerrainType.Dirt;
+    public static TileType SHORE_TYPE = TileType.Gravel;
+    public static TileType LAND_TYPE = TileType.Grass;
+    public static TileType DEEPWATER_TYPE = TileType.Dirt;
 
     private static final OpenSimplexNoise noise = new OpenSimplexNoise();
 
@@ -30,24 +33,45 @@ public class TerrainGeneration {
         return elevationMap;
     }
 
-    public static TerrainType[][] genTypeMap(float[][] elevationMap) {
+    public static TileType[][] genTypeMap(float[][] elevationMap) {
         int size = elevationMap.length;
-        TerrainType[][] typeMap = new TerrainType[size][size];
+        TileType[][] typeMap = new TileType[size][size];
         for (int x=0; x<size; x++){
             for (int z=0; z<size; z++){
-                TerrainType terrainType = TerrainType.Grass;
+                TileType tileType = LAND_TYPE;
                 if (elevationMap[x][z]+(SHORE_THRESHOLD/2) <= SEA_LEVEL) {
-                    terrainType = TerrainType.DeepWater;
+                    tileType = TileType.DeepWater;
                 }
                 else if (elevationMap[x][z] <= SEA_LEVEL) {
-                    terrainType = TerrainType.Water;
+                    tileType = TileType.Water;
                 }
                 else if (elevationMap[x][z]-SHORE_THRESHOLD <= SEA_LEVEL) {
-                    terrainType = SHORE_TYPE;
+                    tileType = SHORE_TYPE;
                 }
-                typeMap[x][z] = terrainType;
+                typeMap[x][z] = tileType;
             }
         }
         return typeMap;
+    }
+
+    public static PhysicalType[][] genPhysicals(float[][] elevationMap, TileType[][] typeMap, short worldSeed) {
+        assert elevationMap.length == typeMap.length;
+        int size = elevationMap.length;
+        PhysicalType[][] physicals = new PhysicalType[size][size];
+        Random rand = new Random(worldSeed);
+        for (int x=0; x<size; x++){
+            for (int z=0; z<size; z++){
+                if (typeMap[x][z] == TileType.Grass){
+                    int selection = rand.nextInt(PhysicalType.values().length*10);
+                    if (selection >= PhysicalType.values().length-1) {
+                        physicals[x][z] = PhysicalType.Nothing;
+                    }
+                    else {
+                        physicals[x][z] = PhysicalType.values()[selection+1];
+                    }
+                }
+            }
+        }
+        return physicals;
     }
 }
