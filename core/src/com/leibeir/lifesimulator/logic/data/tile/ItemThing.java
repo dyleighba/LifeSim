@@ -6,7 +6,7 @@ import com.leibeir.lifesimulator.api.IThing;
 import java.util.UUID;
 
 public class ItemThing implements IThing {
-    private UUID uuid;
+    private final UUID uuid;
 
     public ItemThing() {
         uuid = UUID.randomUUID();

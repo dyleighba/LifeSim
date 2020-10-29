@@ -32,7 +32,7 @@ public abstract class Renderer implements IRenderer {
         modelInstances.clear();
     }
 
-    protected void doneAssetLoading() {};
+    protected void doneAssetLoading() {}
 
     public <T> void loadAsset (String fileName, Class<T> type) {
         assetManager.load(fileName, type);

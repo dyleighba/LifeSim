@@ -46,7 +46,7 @@ public class WaterRenderer extends WorldRenderer {
                 modelInstances.add(mi);
             }
         }
-    };
+    }
 
     @Override
     public void render(Camera camera, Environment environment) {

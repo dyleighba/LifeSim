@@ -6,7 +6,7 @@ import com.leibeir.lifesimulator.api.IThing;
 import java.util.UUID;
 
 public class LivingThing implements IThing {
-    private UUID uuid;
+    private final UUID uuid;
 
     public float hunger;
     public float hungerRate; // Increase in Hunger per tick

@@ -27,7 +27,7 @@ public class Terrain implements ITerrain {
         this.size = size;
         this.seed = seed;
         setup();
-    };
+    }
 
     private void setup() {
         elevationMap = TerrainGeneration.genElevationMap(size, seed);
