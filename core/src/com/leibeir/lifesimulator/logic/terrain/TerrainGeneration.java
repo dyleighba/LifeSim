@@ -17,7 +17,6 @@ public class TerrainGeneration {
 
     public static TileType SHORE_TYPE = TileType.Gravel;
     public static TileType LAND_TYPE = TileType.Grass;
-    public static TileType DEEPWATER_TYPE = TileType.Dirt;
 
     private static final OpenSimplexNoise noise = new OpenSimplexNoise();
 

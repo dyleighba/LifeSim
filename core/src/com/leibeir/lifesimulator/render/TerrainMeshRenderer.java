@@ -10,30 +10,35 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
+import com.leibeir.lifesimulator.api.tile.TileType;
+import com.leibeir.lifesimulator.logic.data.Terrain;
+import com.leibeir.lifesimulator.logic.terrain.TerrainGeneration;
 import com.leibeir.lifesimulator.util.RandomColour;
 import com.leibeir.lifesimulator.world.World;
 
 import java.util.Random;
 
-public class TerrainMeshRenderer extends WorldRenderer {
+public class TerrainMeshRenderer extends Renderer {
     public final float wallDepth = -10f;
 
-    public TerrainMeshRenderer(World world) {
-        super(world);
+    private final Terrain terrain;
+
+    public TerrainMeshRenderer(Terrain terrain) {
+        this.terrain = terrain;
         update();
     }
 
     private Vector3[] getAveragedCorners(int x, int z) {
         float[] elevations = new float[]{
-                world.getElevation(x - 1, z + 1),
-                world.getElevation(x, z + 1),
-                world.getElevation(x + 1, z + 1),
-                world.getElevation(x - 1, z),
-                world.getElevation(x, z),
-                world.getElevation(x + 1, z),
-                world.getElevation(x - 1, z - 1),
-                world.getElevation(x, z - 1),
-                world.getElevation(x + 1, z - 1)
+                terrain.getElevation(x - 1, z + 1),
+                terrain.getElevation(x, z + 1),
+                terrain.getElevation(x + 1, z + 1),
+                terrain.getElevation(x - 1, z),
+                terrain.getElevation(x, z),
+                terrain.getElevation(x + 1, z),
+                terrain.getElevation(x - 1, z - 1),
+                terrain.getElevation(x, z - 1),
+                terrain.getElevation(x + 1, z - 1)
         };
 
         return new Vector3[] {
@@ -109,16 +114,16 @@ public class TerrainMeshRenderer extends WorldRenderer {
 
         Random r = new Random();
         Vector3[] worldCorners = new Vector3[] {
-                getAveragedCorners(0, world.getSize()-1)[0],
-                getAveragedCorners(world.getSize()-1, world.getSize()-1)[1],
+                getAveragedCorners(0, terrain.getSize()-1)[0],
+                getAveragedCorners(terrain.getSize()-1, terrain.getSize()-1)[1],
                 getAveragedCorners(0, 0)[2],
-                getAveragedCorners(world.getSize()-1, 0)[3],
-                new Vector3(-0.5f, wallDepth, world.getSize()-0.5f),
-                new Vector3(world.getSize()-0.5f, wallDepth, world.getSize()-0.5f),
+                getAveragedCorners(terrain.getSize()-1, 0)[3],
+                new Vector3(-0.5f, wallDepth, terrain.getSize()-0.5f),
+                new Vector3(terrain.getSize()-0.5f, wallDepth, terrain.getSize()-0.5f),
                 new Vector3(-0.5f, wallDepth, -0.5f),
-                new Vector3(world.getSize()-0.5f, wallDepth, -0.5f)
+                new Vector3(terrain.getSize()-0.5f, wallDepth, -0.5f)
         };
-        Material edgeMat = new Material(ColorAttribute.createDiffuse(sand));
+        Material edgeMat = new Material(ColorAttribute.createDiffuse(TileColour.get(TileType.Dirt)));
         // Fill triangles
         // TODO perhaps merge all these MeshPartBuilders into one. May or may not make the mesh more performant?
         MeshPartBuilder.VertexInfo[] vertexInfo;
@@ -143,17 +148,14 @@ public class TerrainMeshRenderer extends WorldRenderer {
         modelBuilder.part("edgeZMaxFill", GL20.GL_TRIANGLES, attr, edgeMat)
                 .triangle(vertexInfo[0], vertexInfo[1], vertexInfo[2]);
 
-        for (int x=0; x < world.getSize(); x++) {
-            for (int z=0; z < world.getSize(); z++) {
+        for (int x=0; x < terrain.getSize(); x++) {
+            for (int z=0; z < terrain.getSize(); z++) {
 
                 Vector3[] corners = getAveragedCorners(x, z);
-                Color colour = RandomColour.noisyColour(grass);
-                if (world.isSand(x, z) || world.isWater(x, z)){
-                    colour = RandomColour.noisyColour(sand);
-                }
-                if (world.isDeepWater(x, z)) {
-                    colour = RandomColour.noisyColour(deepSand);
-                }
+                TileType type = terrain.getType(x, z);
+                if (type == TileType.Water) type = TerrainGeneration.SHORE_TYPE;
+                if (type == TileType.DeepWater) type = TileType.Dirt;
+                Color colour = RandomColour.noisyColour(TileColour.get(type));
 
                 Material blockMat = new Material(ColorAttribute.createDiffuse(colour));
                 modelBuilder.part(String.format("faceX%dZ%dT%d",x,z,0), GL20.GL_TRIANGLES, attr, blockMat)
@@ -168,7 +170,7 @@ public class TerrainMeshRenderer extends WorldRenderer {
                     modelBuilder.part(String.format("edgeXMinZ%d",z), GL20.GL_TRIANGLES, attr, edgeMat)
                             .triangle(vertexInfo[0], vertexInfo[1], vertexInfo[2]);
                 }
-                else if (x == world.getSize()-1) {
+                else if (x == terrain.getSize()-1) {
                     vertexInfo = generateTriangleInfo(
                             worldCorners[5], corners[3], corners[1]);
                     modelBuilder.part(String.format("edgeXMaxZ%d",z), GL20.GL_TRIANGLES, attr, edgeMat)
@@ -180,7 +182,7 @@ public class TerrainMeshRenderer extends WorldRenderer {
                     modelBuilder.part(String.format("edgeZMinX%d",x), GL20.GL_TRIANGLES, attr, edgeMat)
                             .triangle(vertexInfo[0], vertexInfo[1], vertexInfo[2]);
                 }
-                else if (z == world.getSize()-1) {
+                else if (z == terrain.getSize()-1) {
                     vertexInfo = generateTriangleInfo(
                             worldCorners[4], corners[1], corners[0]);
                     modelBuilder.part(String.format("edgeZMaxX%d",x), GL20.GL_TRIANGLES, attr, edgeMat)

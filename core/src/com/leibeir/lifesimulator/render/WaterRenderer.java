@@ -11,28 +11,30 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.leibeir.lifesimulator.api.tile.TileType;
+import com.leibeir.lifesimulator.logic.data.Terrain;
 import com.leibeir.lifesimulator.world.World;
 
-public class WaterRenderer extends WorldRenderer {
+public class WaterRenderer extends Renderer {
     public final int waterGridSize;
+    private final Terrain terrain;
 
-    public final static Color water = new Color(0x82A7A6BB);
     private static final String modelFile = "Water.obj";
 
-    public WaterRenderer(World world) {
-        super(world);
+    public WaterRenderer(Terrain terrain) {
+        this.terrain = terrain;
 
-        waterGridSize = (int)Math.ceil((float)world.getSize() / 16);
+        waterGridSize = (int)Math.ceil((float)terrain.getSize() / 16);
         loadAsset(modelFile, Model.class);
     }
 
     public void update() {
         modelInstances.clear();
-        float seaLevel = world.getSeaLevel();
+        float seaLevel = terrain.getSeaLevel();
         for (int x=0; x<waterGridSize; x++) {
             for (int z=0; z<waterGridSize; z++) {
                 ModelInstance mi = new ModelInstance(assetManager.get(modelFile, Model.class));
-                mi.materials.get(0).set(ColorAttribute.createDiffuse(water), new BlendingAttribute(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA));
+                mi.materials.get(0).set(ColorAttribute.createDiffuse(TileColour.get(TileType.Water)), new BlendingAttribute(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA));
                 float offset_x = (x*16)+7.5f;
                 float offset_z = (z*16)+7.5f;
 

@@ -5,23 +5,20 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.leibeir.lifesimulator.api.IWorld;
 import com.leibeir.lifesimulator.api.tile.TileType;
 import com.leibeir.lifesimulator.logic.data.Terrain;
-import com.leibeir.lifesimulator.render.PhysicalsRenderer;
-import com.leibeir.lifesimulator.render.TerrainMeshRenderer;
-import com.leibeir.lifesimulator.render.WaterRenderer;
-import com.leibeir.lifesimulator.render.WorldRenderer;
+import com.leibeir.lifesimulator.render.*;
 
 public class World implements IWorld {
     private final int size;
-    private final WorldRenderer renderer;
+    private final Renderer renderer;
     private final WaterRenderer waterRenderer;
     private final PhysicalsRenderer physicalsRenderer;
     private final Terrain terrain;
 
-    public World(int size){
+    public World(int size) {
         this.size = size;
         terrain = new Terrain(this.size);
-        renderer = new TerrainMeshRenderer(this);
-        waterRenderer = new WaterRenderer(this);
+        renderer = new TerrainMeshRenderer(terrain);
+        waterRenderer = new WaterRenderer(terrain);
         physicalsRenderer = new PhysicalsRenderer(terrain);
     }
 
