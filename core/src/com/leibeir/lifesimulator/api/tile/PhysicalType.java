@@ -4,7 +4,5 @@ public enum PhysicalType {
     Nothing,
     TreeOakSmall,
     TreeOak,
-    TreePine,
-    TreeStump,
-    RockGrey
+    TreePine
 }

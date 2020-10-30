@@ -1,9 +1,10 @@
 package com.leibeir.lifesimulator.logic;
 
-import com.leibeir.lifesimulator.logic.data.SimulationData;
+import com.leibeir.lifesimulator.logic.data.Frame;
+import com.leibeir.lifesimulator.logic.data.Simulation;
 
 public class SimulationRunner {
-    SimulationData simData;
+    Simulation simData;
     public SimulationRunner(String name, int epochs, int epochTicks, int worldSize) {
 
     }

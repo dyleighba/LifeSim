@@ -5,22 +5,25 @@ import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.leibeir.lifesimulator.api.tile.TileType;
+import com.leibeir.lifesimulator.logic.data.Terrain;
+import com.leibeir.lifesimulator.logic.terrain.TerrainGeneration;
 import com.leibeir.lifesimulator.util.RandomColour;
 import com.leibeir.lifesimulator.world.World;
 
-public class TerrainRenderer extends WorldRenderer {
+public class TerrainRenderer extends Renderer {
     private final Model model;
+    private final Terrain terrain;
 
-    public TerrainRenderer(World world) {
-        super(world);
-
+    public TerrainRenderer(Terrain terrain) {
+        this.terrain = terrain;
         // create cube
         ModelBuilder modelBuilder = new ModelBuilder();
         model = modelBuilder.createBox(1f, 1f, 1f,
                 new Material(ColorAttribute.createDiffuse(Color.MAGENTA)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-        for (int x=0; x<world.getSize(); x++) {
-            for (int z=0; z<world.getSize(); z++){
+        for (int x=0; x<terrain.getSize(); x++) {
+            for (int z=0; z<terrain.getSize(); z++){
                 ModelInstance modelInstance = new ModelInstance(model);
                 modelInstances.add(modelInstance);
             }
@@ -30,20 +33,14 @@ public class TerrainRenderer extends WorldRenderer {
 
     @Override
     public void update() {
-        for (int x=0; x<world.getSize(); x++) {
-            for (int z=0; z<world.getSize(); z++){
-                float elevation = world.getElevation(x, z);
-                Color colour = RandomColour.noisyColour(grass);
-                //if (world.isWater(x, z)){
-                //    colour = Color.BLUE;
-                //}
-                if (world.isSand(x, z) || world.isWater(x, z)){
-                    colour = RandomColour.noisyColour(sand);
-                }
-                if (world.isDeepWater(x, z)) {
-                    colour = RandomColour.noisyColour(deepSand);
-                }
-                int pos = (x*world.getSize()) + z;
+        for (int x=0; x<terrain.getSize(); x++) {
+            for (int z=0; z<terrain.getSize(); z++){
+                float elevation = terrain.getElevation(x, z);
+                TileType type = terrain.getType(x, z);
+                if (type == TileType.Water) type = TerrainGeneration.SHORE_TYPE;
+                if (type == TileType.DeepWater) type = TileType.Dirt;
+                Color colour = RandomColour.noisyColour(TileColour.get(type));
+                int pos = (x*terrain.getSize()) + z;
                 ModelInstance modelInstance = modelInstances.get(pos);
                 modelInstance.materials.get(0).set(ColorAttribute.createDiffuse(colour));
                 modelInstance.transform.setToTranslation(x, -5.5f+(elevation/2), z);
